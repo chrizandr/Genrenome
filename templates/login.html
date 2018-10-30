@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Login - Genrenome</title>
+
+    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="static/css/login.css" rel="stylesheet">
+    <script src="static/jquery/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+
+		<div class="container">
+
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</a>
+            <a class="navbar-brand" href="/"><i class="fas fa-music"></i> Genrenome <i class="fas fa-brain"></i> </a>
+
+			<div class="nav-collapse">
+				<ul class="nav pull-right"></ul>
+			</div>
+
+		</div>
+
+	</nav>
+
+    <div class="container">
+      <div class="card card-container">
+                <form class="form-signin" action="/login" method="post">
+    			<h3>Login</h3> <br>
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <ul class=flashes>
+                            {% for message in messages %}
+                                <li style="color:red;">{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                        {% endif %}
+                    {% endwith %}
+
+    					<label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="" placeholder="Username" />
+
+    					<label for="password">Password:</label>
+    					<input type="password" id="password" name="password" value="" placeholder="Password"/>
+    				    <button class="button btn btn-success btn-large">Sign In</button>
+
+    		</form>
+            <a href="/register" class="forgot-password">
+                Don't have an account?
+            </a>
+            </div>
+    	</div>
+
+</body>
+
+</html>

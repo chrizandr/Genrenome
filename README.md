@@ -29,3 +29,7 @@ Please go through the setup tutorial present [here](#).
 python run.py
 ```
 
+
+### Theory
+Scoring of Big Five model personality done on the basis of the following quiz:
+https://openpsychometrics.org/printable/big-five-personality-test.pdf

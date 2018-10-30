@@ -1,0 +1,11 @@
+echo "Install Virtualenv"
+sudo apt-get install virtualenv
+
+echo "Creating virtualenv"
+virtualenv venv -p /usr/bin/python3
+
+source venv/bin/activate
+
+pip install -r requirement.txt
+
+python model.py

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="favicon.ico"/>
+
+    <title>Genrenome</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.2/css/all.css" integrity="sha384-/rXc/GQVaYpyDdyxK+ecHPVYJSN9bmVFBvjA/9eOB+pb3F2w2N6fc5qB9Ew5yIns" crossorigin="anonymous">
+    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    {% block style %}{% endblock %}
+  </head>
+
+  <body>
+
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+      <div class="container">
+        {% if index %}
+        <a class="navbar-brand" href="#"><i class="fas fa-music"></i> Genrenome <i class="fas fa-brain"></i> </a>
+        {% else %}
+        <a class="navbar-brand" href="/"><i class="fas fa-music"></i> Genrenome <i class="fas fa-brain"></i> </a>
+        {% endif %}
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+          {% if index %}
+            <li class="nav-item active"><a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a></li>
+          {% endif %}
+
+          {% if personality %}
+            <li class="nav-item active"><a class="nav-link" href="#">Personality<span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="/personality">Personality<span class="sr-only">(current)</span></a></li>
+          {% endif %}
+
+          {% if music %}
+            <li class="nav-item active"><a class="nav-link" href="#">Music<span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="/music">Music<span class="sr-only">(current)</span></a></li>
+          {% endif %}
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout<span class="sr-only">(current)</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="static/jquery/jquery.min.js"></script>
+    <script src="static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  </body>
+
+</html>
