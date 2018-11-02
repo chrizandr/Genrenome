@@ -116,25 +116,24 @@ def register():
     if 'user' in session:
         return redirect(url_for('index'))
     if request.method == "GET":
-        return render_template("signup.html")
+        return render_template("register.html")
     if request.method == "POST":
         name = request.form["name"]
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
         confirm_password = request.form["confirm_password"]
-        faculty = request.form["faculty"]
         if password != confirm_password:
             flash("Passwords don't match")
             return redirect(url_for('register'))
         if db_session.query(exists().where(User.username == username)).scalar():
             flash("User already exists")
             return redirect(url_for('register'))
-        new_user = User(username, password, name, email, faculty)
+        new_user = User(username, password, name, email)
         db_session.add(new_user)
         db_session.commit()
         flash("You have successfully registered, please login")
-        return redirect(url_for('login'))
+        return redirect(url_for('register'))
 
 
 if __name__ == "__main__":
