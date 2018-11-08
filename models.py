@@ -100,11 +100,12 @@ class Personality(Base):
 
     def __repr__(self):
         """Verbose object name."""
-        return "<userid='%s', score='%s'>" % (self.user_id, ",".join([self.O, self.C, self.E, self.A, self.N]))
+        return "<userid='%s', score='%s'>" % (self.user_id, ",".join([str(self.O), str(self.C),
+                                                                      str(self.E), str(self.A), str(self.N)]))
 
 
 class GenreProf(Base):
-    """Model for OCEAN score."""
+    """Model for Genre Profile."""
 
     __tablename__ = "genre_prof"
 
@@ -163,7 +164,7 @@ class GenreProf(Base):
 
 if __name__ == "__main__":
     engine = create_engine(DB_URL)
-    Base.metadata.create_all(engine)
+    # Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     pdb.set_trace()

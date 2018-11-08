@@ -40,16 +40,28 @@
             <li class="nav-item"><a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a></li>
           {% endif %}
 
-          {% if personality %}
-            <li class="nav-item active"><a class="nav-link" href="#">Personality<span class="sr-only">(current)</span></a></li>
-          {% else %}
-            <li class="nav-item"><a class="nav-link" href="/personality">Personality<span class="sr-only">(current)</span></a></li>
-          {% endif %}
+          {% if admin %}
 
-          {% if music %}
-            <li class="nav-item active"><a class="nav-link" href="#">Music<span class="sr-only">(current)</span></a></li>
+              {% if annotate %}
+                <li class="nav-item active"><a class="nav-link" href="#">Annotation<span class="sr-only">(current)</span></a></li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="/annotate">Annotation<span class="sr-only">(current)</span></a></li>
+              {% endif %}
+
           {% else %}
-            <li class="nav-item"><a class="nav-link" href="/music">Music<span class="sr-only">(current)</span></a></li>
+
+              {% if personality %}
+                <li class="nav-item active"><a class="nav-link" href="#">Personality<span class="sr-only">(current)</span></a></li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="/personality">Personality<span class="sr-only">(current)</span></a></li>
+              {% endif %}
+
+              {% if music %}
+                <li class="nav-item active"><a class="nav-link" href="#">Music<span class="sr-only">(current)</span></a></li>
+              {% else %}
+                <li class="nav-item"><a class="nav-link" href="/music">Music<span class="sr-only">(current)</span></a></li>
+              {% endif %}
+
           {% endif %}
           <li class="nav-item"><a class="nav-link" href="/logout">Logout<span class="sr-only">(current)</span></a></li>
           </ul>

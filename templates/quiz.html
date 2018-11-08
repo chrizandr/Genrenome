@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block style %}
+<style>
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-12 text-center">
+ {% if taken %}
+  <h3 class="mt-5">You have already taken the quiz.</h3> <br>
+ {% else %}
+  <h3 class="mt-5">Please answer the following questions.</h3> <br>
+    <div class="container-center">
+        <form action="/personality" method="post">
+                {% for k, value in quiz.items() %}
+                <table class="table">
+                <tbody>
+                <col width="100%">
+                <tr><td><label for="firstname">{{value}}</label> <br></td></tr>
+                </tbody>
+                </table>
+
+                <table class="table">
+                <col width="20%">
+                <tbody>
+                <tr>
+                  <td><input type="radio" name={{k}} value=1> Disagree</td>
+                  <td><input type="radio" name={{k}} value=2>Slightly Disagree</td>
+                  <td><input type="radio" name={{k}} value=3>Neutral</td>
+                  <td><input type="radio" name={{k}} value=4>Slightly Agree</td>
+                  <td><input type="radio" name={{k}} value=5>Agree</td>
+                </tr>
+                </tbody>
+                </table>
+
+                <br><br>
+                {% endfor %}
+            <button class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div>
+        <br>
+    </div>
+  {% endif %}
+</div>
+</div>
+{% endblock %}
