@@ -56,10 +56,10 @@
                 <li class="nav-item"><a class="nav-link" href="/personality">Personality<span class="sr-only">(current)</span></a></li>
               {% endif %}
 
-              {% if music %}
-                <li class="nav-item active"><a class="nav-link" href="#">Music<span class="sr-only">(current)</span></a></li>
+              {% if songs %}
+                <li class="nav-item active"><a class="nav-link" href="#">Songs<span class="sr-only">(current)</span></a></li>
               {% else %}
-                <li class="nav-item"><a class="nav-link" href="/music">Music<span class="sr-only">(current)</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="/songs">Songs<span class="sr-only">(current)</span></a></li>
               {% endif %}
 
           {% endif %}
@@ -77,6 +77,7 @@
     <!-- Bootstrap core JavaScript -->
     <script src="static/jquery/jquery.min.js"></script>
     <script src="static/bootstrap/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
 
   </body>
 

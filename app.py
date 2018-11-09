@@ -6,6 +6,8 @@ from flask import request
 from flask import session
 from flask import render_template, url_for, redirect, flash
 
+from gevent.pywsgi import WSGIServer
+
 import pdb
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -81,10 +83,10 @@ def annotate():
         return redirect(url_for("index"))
 
 
-@app.route('/music', methods=['GET', 'POST'])
-def music():
+@app.route('/songs', methods=['GET', 'POST'])
+def songs():
     """Index Page."""
-    context = {"music": True}
+    context = {"songs": True}
     return render_template("index.html", **context)
     if 'admin' in session:
         return redirect(url_for("admin"))
@@ -189,14 +191,14 @@ if __name__ == "__main__":
 
     IP_addr = sys.argv[1]
     port = sys.argv[2]
-    try:
-        print("Running server...")
-        app.run(host=IP_addr, debug=True, port=int(port))
-
-    # http_server = WSGIServer((IP_addr, int(port)), app)
-    # print("Server running on http://{}:{}".format(IP_addr, port))
     # try:
-    #     http_server.serve_forever()
+    #     print("Running server...")
+    #     app.run(host=IP_addr, debug=True, port=int(port))
+
+    http_server = WSGIServer((IP_addr, int(port)), app)
+    print("Server running on http://{}:{}".format(IP_addr, port))
+    try:
+        http_server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting server")
         sys.exit(0)
