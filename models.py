@@ -164,7 +164,7 @@ class GenreProf(Base):
 
 if __name__ == "__main__":
     engine = create_engine(DB_URL)
-    # Base.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     pdb.set_trace()
