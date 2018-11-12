@@ -212,14 +212,14 @@ if __name__ == "__main__":
 
     IP_addr = sys.argv[1]
     port = sys.argv[2]
-    try:
-        print("Running server...")
-        app.run(host=IP_addr, debug=True, port=int(port))
-
-    # http_server = WSGIServer((IP_addr, int(port)), app)
-    # print("Server running on http://{}:{}".format(IP_addr, port))
     # try:
-        # http_server.serve_forever()
+    #     print("Running server...")
+    #     app.run(host=IP_addr, debug=True, port=int(port))
+
+    http_server = WSGIServer((IP_addr, int(port)), app)
+    print("Server running on http://{}:{}".format(IP_addr, port))
+    try:
+        http_server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting server")
         sys.exit(0)

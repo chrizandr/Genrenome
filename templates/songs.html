@@ -22,7 +22,7 @@
 
     <div class="container-center">
         <p>You can use the "Add another entry" button to add more songs. Once you've added enough songs, press "Submit Songs" to add them to the database.
-           Please make sure to submit atleast 5 songs, you can come back and add more later also.</p>
+           Please make sure to submit atleast 5 songs, you don't have to add them at once. You can add some now and come back later to add more.</p>
 
         <div class="controls">
                 <form id="songform" action="/songs" method="post">
@@ -41,7 +41,7 @@
         </div> <br><br>
         {% if submitted %}
         <div class="container-center">
-            <p> Here are the songs that you have previously submitted. You can submit more at the bottom of the page.</p><br>
+            <p> Here are the songs that you have previously submitted. You can submit more than 5 songs, just add more in the form above!</p><br>
             <table class="table">
                 <tbody>
                     <tr>

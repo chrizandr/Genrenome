@@ -157,18 +157,33 @@ class GenreProf(Base):
         return "<userid='%s'>" % (self.user_id)
 
 
-if __name__ == "__main__":
+def get_debug_session():
+    """Get a DB session for debugging."""
     engine = create_engine(DB_URL)
-    # Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    pdb.set_trace()
+    return session
+
+
+def setup():
+    """Setup for the app."""
+    # Create database tables
+    engine = create_engine(DB_URL)
+    Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
     # Add admin
-    # adminuser = User("admin", "genrenome", "admin", "admin@genrenome")
-    # session.add(adminuser)
-    # session.commit()
-    #
-    # admin = Admin(adminuser.id_)
-    # session.add(admin)
-    # session.commit()
-    #
-    pdb.set_trace()
+    adminuser = User("admin", "genrenome", "admin", "admin@genrenome")
+    session.add(adminuser)
+    session.commit()
+
+    admin = Admin(adminuser.id_)
+    session.add(admin)
+    session.commit()
+    return session
+
+
+if __name__ == "__main__":
+    # session = setup()
+    session = get_debug_session()

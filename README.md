@@ -18,16 +18,17 @@ There are literally thousands of genres of music and we would like to find out i
 
 ### Installation instructions
 ```
-sudo ./configure
-pip install -r requirements.txt
+./configure
+
 ```
 ### Setup
 Please go through the setup tutorial present [here](#).
 
 ### Running the application
 ```
-python run.py
+python app.py [host address] [port]
 ```
+Example: `python app.py 0.0.0.0 8081`
 
 
 ### Theory
