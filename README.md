@@ -26,6 +26,7 @@ Please go through the setup tutorial present [here](#).
 
 ### Running the application
 ```
+source venv/bin/activate
 python app.py [host address] [port]
 ```
 Example: `python app.py 0.0.0.0 8081`
