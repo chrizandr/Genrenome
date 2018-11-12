@@ -185,5 +185,5 @@ def setup():
 
 
 if __name__ == "__main__":
-    # session = setup()
-    session = get_debug_session()
+    session = setup()
+    # session = get_debug_session()
