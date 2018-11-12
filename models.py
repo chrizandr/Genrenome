@@ -52,6 +52,10 @@ class Admin(Base):
     id_ = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id_"), unique=True)
 
+    def __init__(self, user_id):
+        """Create admin."""
+        self.user_id = user_id
+
     def __repr__(self):
         """Verbose object name."""
         return "<userid='%s'>" % (self.user_id)
@@ -63,7 +67,7 @@ class Songs(Base):
     __tablename__ = "songs"
 
     id_ = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id_"))
+    user_id = Column(Integer, ForeignKey("users.id_"), unique=False)
     title = Column(String(50))
     artist = Column(String(50))
     genre = Column(String(50))
@@ -73,7 +77,7 @@ class Songs(Base):
         self.user_id = user_id
         self.title = title
         self.artist = artist
-        self.genre = "Unkown"
+        self.genre = "Unknown"
 
     def __repr__(self):
         """Verbose object name."""
@@ -110,7 +114,7 @@ class GenreProf(Base):
     __tablename__ = "genre_prof"
 
     id_ = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id_"))
+    user_id = Column(Integer, ForeignKey("users.id_"), unique=True)
     genres = ["Blues", "Classical", "Country", "Electronic", "Folk", "Jazz", "New age", "Reggae", "Rock"]
 
     Blues = Column(Integer)
@@ -123,7 +127,7 @@ class GenreProf(Base):
     Reggae = Column(Integer)
     Rock = Column(Integer)
 
-    def __init__(self, user_id, score):
+    def __init__(self, user_id):
         """Create new instance."""
         self.user_id = user_id
         self.Blues = 0
@@ -136,26 +140,17 @@ class GenreProf(Base):
         self.Reggae = 0
         self.Rock = 0
 
-    def add_genre(self, genre):
+    def add_genre(self, Blues=0, Classical=0, Country=0, Electronic=0, Folk=0, Jazz=0, New_age=0, Reggae=0, Rock=0):
         """Add prefered genre to the music profile of the user."""
-        if genre == "Blues":
-            self.Blues += 1
-        elif genre == "Classical":
-            self.Classical += 1
-        elif genre == "Country":
-            self.Country += 1
-        elif genre == "Electronic":
-            self.Electronic += 1
-        elif genre == "Folk":
-            self.Folk += 1
-        elif genre == "Jazz":
-            self.Jazz += 1
-        elif genre == "New age":
-            self.New_age += 1
-        elif genre == "Reggae":
-            self.Reggae += 1
-        elif genre == "Rock":
-            self.Rock += 1
+        self.Blues += Blues
+        self.Classical += Classical
+        self.Country += Country
+        self.Electronic += Electronic
+        self.Folk += Folk
+        self.Jazz += Jazz
+        self.New_age += New_age
+        self.Reggae += Reggae
+        self.Rock += Rock
 
     def __repr__(self):
         """Verbose object name."""
@@ -164,7 +159,16 @@ class GenreProf(Base):
 
 if __name__ == "__main__":
     engine = create_engine(DB_URL)
-    Base.metadata.create_all(engine)
+    # Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
+    # Add admin
+    # adminuser = User("admin", "genrenome", "admin", "admin@genrenome")
+    # session.add(adminuser)
+    # session.commit()
+    #
+    # admin = Admin(adminuser.id_)
+    # session.add(admin)
+    # session.commit()
+    #
     pdb.set_trace()

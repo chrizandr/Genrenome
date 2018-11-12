@@ -1,6 +1,4 @@
 """Main application code."""
-import billboard
-
 from flask import Flask
 from flask import request
 from flask import session
@@ -22,8 +20,6 @@ import sys
 from quiz import quiz, score_quiz
 
 
-print("Loading billboard top 100...")
-chart = billboard.ChartData('hot-100')
 print("Setting up app...")
 app = Flask(__name__)
 app.secret_key = Key
@@ -43,8 +39,8 @@ def index():
         p = db_session.query(exists().where(Personality.user_id == session['user'])).scalar()
         context["personality_check"] = p
         # Check if the user provided 5 songs
-        s = db_session.query(Songs).filter(Songs.id_ == session['user']).all()
-        if len(s) > 5:
+        s = db_session.query(Songs).filter(Songs.user_id == session['user']).all()
+        if len(s) >= 5:
             context["music_check"] = True
         return render_template("index.html", **context)
     else:
@@ -54,7 +50,7 @@ def index():
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     """Admin Index Page."""
-    context = {"admin": True}
+    context = {"index": True}
     if 'admin' in session:
         context["admin"] = True
         return render_template("admin.html", **context)
@@ -67,18 +63,28 @@ def annotate():
     """Annotation Page."""
     context = {"annotate": True}
     if 'admin' in session:
+        context["admin"] = True
+        context["genre_list"] = GenreProf.genres
         if request.method == "GET":
-            # Get all songs not in GenreProf.
-            # List the songs one by one, and then ask for an Annotation
-            pass
+            songs = db_session.query(Songs).filter(Songs.genre == "Unknown").all()
+            context["toannotate"] = songs
+            return render_template("annotate.html", **context)
         if request.method == "POST":
-            # The song will have a GenreProf created if it was not made before.
-            # If GenreProf exists then increment the genre value to which it belongs.
-            pass
-        return render_template("admin.html")
-        if admin:
-            return render_template("admin.html", **context)
-        return render_template("index.html", **context)
+            profile = db_session.query(GenreProf).filter(GenreProf.user_id == session['user']).all()
+            if len(profile) < 1:
+                profile = GenreProf(session['user'])
+                db_session.add(profile)
+                db_session.commit()
+            else:
+                profile = profile[0]
+
+            for sid in request.form:
+                sgenre = request.form[sid]
+                if sgenre != "Unknown":
+                    db_session.query(Songs).filter(Songs.id_ == sid).one().genre = sgenre
+                    profile.add_genre(**{sgenre: 1})
+            db_session.commit()
+            return redirect(url_for("annotate"))
     else:
         return redirect(url_for("index"))
 
@@ -87,11 +93,26 @@ def annotate():
 def songs():
     """Index Page."""
     context = {"songs": True}
-    return render_template("index.html", **context)
     if 'admin' in session:
         return redirect(url_for("admin"))
     if 'user' in session:
-        return render_template("index.html", **context)
+        if request.method == "GET":
+            submitted = db_session.query(Songs).filter(Songs.user_id == session['user']).all()
+            if len(submitted) > 0:
+                context["submitted"] = submitted
+            return render_template("songs.html", **context)
+        if request.method == "POST":
+            songs = {}
+            for k in request.form:
+                field, num = k.split('_')
+                if num not in songs:
+                    songs[num] = {}
+                songs[num][field] = request.form[k]
+            for s in songs:
+                print(s)
+                db_session.add(Songs(session['user'], **songs[s]))
+            db_session.commit()
+            return redirect(url_for('songs'))
     else:
         return redirect(url_for("login"))
 
@@ -104,7 +125,7 @@ def personality():
         return redirect(url_for("admin"))
     if 'user' in session:
         p = db_session.query(exists().where(Personality.user_id == session['user'])).scalar()
-        # context["taken"] = p
+        context["taken_quiz"] = p
         if request.method == "GET":
             return render_template("quiz.html", **context)
         elif request.method == "POST":
@@ -191,14 +212,14 @@ if __name__ == "__main__":
 
     IP_addr = sys.argv[1]
     port = sys.argv[2]
-    # try:
-    #     print("Running server...")
-    #     app.run(host=IP_addr, debug=True, port=int(port))
-
-    http_server = WSGIServer((IP_addr, int(port)), app)
-    print("Server running on http://{}:{}".format(IP_addr, port))
     try:
-        http_server.serve_forever()
+        print("Running server...")
+        app.run(host=IP_addr, debug=True, port=int(port))
+
+    # http_server = WSGIServer((IP_addr, int(port)), app)
+    # print("Server running on http://{}:{}".format(IP_addr, port))
+    # try:
+        # http_server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting server")
         sys.exit(0)
