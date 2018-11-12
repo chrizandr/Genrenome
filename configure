@@ -7,4 +7,4 @@ virtualenv venv -p /usr/bin/python3
 source venv/bin/activate
 pip install -r requirement.txt
 
-python model.py
+python models.py
