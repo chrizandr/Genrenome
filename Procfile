@@ -1,1 +1,1 @@
-web: python models.py; gunicorn --bind 0.0.0.0:$PORT app:app
+web: python models.py; gunicorn -b :$PORT app:app;

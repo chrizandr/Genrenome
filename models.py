@@ -2,6 +2,7 @@
 
 import os
 import pdb
+from settings import DB_URL
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
@@ -185,6 +186,5 @@ def setup(DB_URL):
 
 
 if __name__ == "__main__":
-    DB_URL = os.environ["DATABASE_URL"]
     session = setup(DB_URL)
     # session = get_debug_session(DB_URL)

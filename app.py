@@ -6,7 +6,7 @@ from flask import render_template, url_for, redirect, flash
 
 from gevent.pywsgi import WSGIServer
 
-import os
+from settings import DB_URL
 
 # import pdb
 from sqlalchemy.orm import scoped_session
@@ -25,7 +25,7 @@ print("Setting up app...")
 app = Flask(__name__)
 app.secret_key = Key
 print("Creating database link and session...")
-engine = create_engine(os.environ["DATABASE_URL"])
+engine = create_engine(DB_URL)
 db_session = scoped_session(sessionmaker(bind=engine))
 
 
