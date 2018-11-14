@@ -207,15 +207,9 @@ def register():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) <= 1:
-        print("Usage:\n\tpython app.py [host address] [port]\n")
-        sys.exit(0)
-
-    IP_addr = sys.argv[1]
-    port = sys.argv[2]
     try:
         print("Running server...")
-        app.run(host=IP_addr, debug=True, port=int(port))
+        app.run(debug=True)
 
     # http_server = WSGIServer((IP_addr, int(port)), app)
     # print("Server running on http://{}:{}".format(IP_addr, port))
