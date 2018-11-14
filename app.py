@@ -6,6 +6,8 @@ from flask import render_template, url_for, redirect, flash
 
 from gevent.pywsgi import WSGIServer
 
+import os
+
 # import pdb
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
@@ -13,7 +15,6 @@ from sqlalchemy import create_engine, exists
 from sqlalchemy.orm.exc import NoResultFound
 from models import User, Admin
 from models import Songs, GenreProf, Personality
-from settings import DB_URL
 from settings import Key
 import sys
 
@@ -24,7 +25,7 @@ print("Setting up app...")
 app = Flask(__name__)
 app.secret_key = Key
 print("Creating database link and session...")
-engine = create_engine(DB_URL)
+engine = create_engine(os.environ["DATABASE_URL"])
 db_session = scoped_session(sessionmaker(bind=engine))
 
 

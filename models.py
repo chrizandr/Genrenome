@@ -1,7 +1,7 @@
 """Models for Hydra Classes."""
 
+import os
 import pdb
-from settings import DB_URL
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
@@ -157,7 +157,7 @@ class GenreProf(Base):
         return "<userid='%s'>" % (self.user_id)
 
 
-def get_debug_session():
+def get_debug_session(DB_URL):
     """Get a DB session for debugging."""
     engine = create_engine(DB_URL)
     Session = sessionmaker(bind=engine)
@@ -166,8 +166,8 @@ def get_debug_session():
     return session
 
 
-def setup():
-    """Setup for the app."""
+def setup(DB_URL):
+    """Setup."""
     # Create database tables
     engine = create_engine(DB_URL)
     Base.metadata.create_all(engine)
@@ -185,5 +185,6 @@ def setup():
 
 
 if __name__ == "__main__":
-    session = setup()
-    # session = get_debug_session()
+    DB_URL = os.environ["DATABASE_URL"]
+    session = setup(DB_URL)
+    # session = get_debug_session(DB_URL)
