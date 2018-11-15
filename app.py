@@ -121,7 +121,7 @@ def songs():
 @app.route('/personality', methods=['GET', 'POST'])
 def personality():
     """Index Page."""
-    context = {"personality": True, "quiz": quiz}
+    context = {"personality": True, "quiz": quiz, "score": {}}
     if 'admin' in session:
         return redirect(url_for("admin"))
     if 'user' in session:
@@ -133,7 +133,12 @@ def personality():
             score = {}
             for key in request.form:
                 score[int(key)] = int(request.form[key])
-            ocean_score = score_quiz(score)
+            try:
+                ocean_score = score_quiz(score)
+            except KeyError:
+                flash("You have not filled all the questions")
+                context["score"] = score
+                return render_template("quiz.html", **context)
             p = Personality(session["user"], ocean_score)
             db_session.add(p)
             db_session.commit()
@@ -216,7 +221,7 @@ if __name__ == "__main__":
     # try:
     #     print("Running server...")
     #     app.run(host=IP_addr, debug=True, port=int(port))
-
+    #
     http_server = WSGIServer((IP_addr, int(port)), app)
     print("Server running on http://{}:{}".format(IP_addr, port))
     try:

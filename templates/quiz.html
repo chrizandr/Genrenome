@@ -27,7 +27,16 @@ tr:nth-child(even) {
  {% else %}
   <h3 class="mt-5">Please answer the following questions.</h3> <br>
     <div class="container-center">
-        <form action="/personality" method="post">
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+              <ul class=flashes>
+              {% for message in messages %}
+                  <li style="color:red;">{{ message }}</li>
+              {% endfor %}
+              </ul>
+          {% endif %}
+      {% endwith %}
+      <form action="/personality" method="post">
                 {% for k, value in quiz.items() %}
                 <table class="table">
                 <tbody>
@@ -40,11 +49,31 @@ tr:nth-child(even) {
                 <col width="20%">
                 <tbody>
                 <tr>
-                  <td><input type="radio" name={{k}} value=1> Disagree</td>
-                  <td><input type="radio" name={{k}} value=2>Slightly Disagree</td>
-                  <td><input type="radio" name={{k}} value=3>Neutral</td>
-                  <td><input type="radio" name={{k}} value=4>Slightly Agree</td>
-                  <td><input type="radio" name={{k}} value=5>Agree</td>
+                  {% if k in score and score[k] == 1 %}
+                    <td><input id="{{k}}_1" type="radio" name={{k}} value=1 checked><label for="{{k}}_1">Disagree</label></td>
+                  {% else %}
+                    <td><input id="{{k}}_1" type="radio" name={{k}} value=1><label for="{{k}}_1">Disagree</label></td>
+                  {% endif %}
+                  {% if k in score and score[k] == 2 %}
+                    <td><input id="{{k}}_2" type="radio" name={{k}} value=2 checked><label for="{{k}}_2">Slightly Disagree</label></td>
+                  {% else %}
+                    <td><input id="{{k}}_2" type="radio" name={{k}} value=2><label for="{{k}}_2">Slightly Disagree</label></td>
+                  {% endif %}
+                  {% if k in score and score[k] == 3 %}
+                    <td><input id="{{k}}_3" type="radio" name={{k}} value=3 checked><label for="{{k}}_3">Neutral</label></td>
+                  {% else %}
+                    <td><input id="{{k}}_3" type="radio" name={{k}} value=3><label for="{{k}}_3">Neutral</label></td>
+                  {% endif %}
+                  {% if k in score and score[k] == 4 %}
+                    <td><input id="{{k}}_4" type="radio" name={{k}} value=4 checked><label for="{{k}}_4">Slightly Agree</label></td>
+                  {% else %}
+                    <td><input id="{{k}}_4" type="radio" name={{k}} value=4><label for="{{k}}_4">Slightly Agree</label></td>
+                  {% endif %}
+                  {% if k in score and score[k] == 5 %}
+                    <td><input id="{{k}}_5" type="radio" name={{k}} value=5 checked><label for="{{k}}_5">Agree</label></td>
+                  {% else %}
+                    <td><input id="{{k}}_5" type="radio" name={{k}} value=5><label for="{{k}}_5">Agree</label></td>
+                  {% endif %}
                 </tr>
                 </tbody>
                 </table>
