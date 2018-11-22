@@ -16,6 +16,11 @@ td, th {
 tr:nth-child(even) {
     background-color: #dddddd;
 }
+
+td label {
+    display:block;
+    width:100%;
+}
 </style>
 {% endblock %}
 
@@ -37,14 +42,45 @@ tr:nth-child(even) {
           {% endif %}
       {% endwith %}
       <form action="/personality" method="post">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+
+                  {% if gender and gender == "U" %}
+                  <option value="U" selected="selected" >--Select--</option>
+                  {% else %}
+                  <option value="U">--Select--</option>
+                  {% endif %}
+
+                  {% if gender and gender == "M" %}
+                  <option value="M" selected="selected" >Male</option>
+                  {% else %}
+                  <option value="M">Male</option>
+                  {% endif %}
+
+                  {% if gender and gender == "F" %}
+                  <option value="F" selected="selected" >Female</option>
+                  {% else %}
+                  <option value="F">Female</option>
+                  {% endif %}
+
+                </select>
+                <br>
+
+                <label for="age">Age</label>
+                {% if age %}
+                <input type="text" id="age" name="age" value={{age}} placeholder="0-200"/>
+                {% else %}
+                <input type="text" id="age" name="age" value="" placeholder="0-200"/>
+                {% endif %}
+                <br><br>
+
                 {% for k, value in quiz.items() %}
                 <table class="table">
-                <tbody>
-                <col width="100%">
-                <tr><td><label for="firstname">{{value}}</label> <br></td></tr>
-                </tbody>
+                  <tbody>
+                    <col width="100%">
+                    <tr><td><label for="firstname">{{value}}</label> <br></td></tr>
+                  </tbody>
                 </table>
-
                 <table class="table">
                 <col width="20%">
                 <tbody>

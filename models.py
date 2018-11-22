@@ -25,6 +25,8 @@ class User(Base):
     password = Column(String(20))
     name = Column(String(20))
     email = Column(String(20), unique=True)
+    age = Column(Integer)
+    gender = Column(String(20))
 
     def __init__(self, username, password, name, email):
         """Create new instance."""
@@ -32,6 +34,8 @@ class User(Base):
         self.password = bcrypt.encrypt(password)
         self.name = name
         self.email = email
+        self.age = 0
+        self.gender = "U"
 
     def validate_password(self, password):
         """Check encrypted password."""
@@ -187,4 +191,4 @@ def setup(DB_URL):
 
 if __name__ == "__main__":
     # session = setup(DB_URL)
-     session = get_debug_session(DB_URL)
+    session = get_debug_session(DB_URL)

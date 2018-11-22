@@ -8,7 +8,7 @@ from gevent.pywsgi import WSGIServer
 
 from settings import DB_URL
 
-# import pdb
+import pdb
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, exists
@@ -126,19 +126,37 @@ def personality():
         return redirect(url_for("admin"))
     if 'user' in session:
         p = db_session.query(exists().where(Personality.user_id == session['user'])).scalar()
-        context["taken_quiz"] = p
+        if p:
+            context["taken_quiz"] = p
+            return redirect(url_for("personality"))
+
         if request.method == "GET":
             return render_template("quiz.html", **context)
         elif request.method == "POST":
             score = {}
+            context['age'] = request.form['age']
+            context['gender'] = request.form['gender']
+
             for key in request.form:
-                score[int(key)] = int(request.form[key])
+                if key not in ['gender', 'age']:
+                    score[int(key)] = int(request.form[key])
+
+            context["score"] = score
+
             try:
                 ocean_score = score_quiz(score)
             except KeyError:
                 flash("You have not filled all the questions")
-                context["score"] = score
                 return render_template("quiz.html", **context)
+
+            if request.form['age'] == '' or request.form['gender'] == 'U':
+                flash("You have not provided age or gender")
+                return render_template("quiz.html", **context)
+
+            user = db_session.query(User).filter(User.id_ == session['user']).one()
+            user.age = request.form['age']
+            user.gender = request.form['gender']
+
             p = Personality(session["user"], ocean_score)
             db_session.add(p)
             db_session.commit()
@@ -208,7 +226,7 @@ def register():
         db_session.add(new_user)
         db_session.commit()
         flash("You have successfully registered, please login")
-        return redirect(url_for('register'))
+        return redirect(url_for('login'))
 
 
 if __name__ == "__main__":
@@ -218,14 +236,14 @@ if __name__ == "__main__":
 
     IP_addr = sys.argv[1]
     port = sys.argv[2]
-    # try:
-    #     print("Running server...")
-    #     app.run(host=IP_addr, debug=True, port=int(port))
-    #
-    http_server = WSGIServer((IP_addr, int(port)), app)
-    print("Server running on http://{}:{}".format(IP_addr, port))
     try:
-        http_server.serve_forever()
+        print("Running server...")
+        app.run(host=IP_addr, debug=True, port=int(port))
+
+    # http_server = WSGIServer((IP_addr, int(port)), app)
+    # print("Server running on http://{}:{}".format(IP_addr, port))
+    # try:
+    #     http_server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting server")
         sys.exit(0)

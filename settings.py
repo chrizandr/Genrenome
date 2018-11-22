@@ -7,4 +7,5 @@
 
 # Local running on SQLite
 DB_URL = 'sqlite:///database.db'
+# DB_URL = 'sqlite:///test.db'
 Key = "sgjngfdfg//23/=+342][234097824-1<><123><!@#$#%^]"
