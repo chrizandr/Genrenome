@@ -128,7 +128,7 @@ def personality():
         p = db_session.query(exists().where(Personality.user_id == session['user'])).scalar()
         if p:
             context["taken_quiz"] = p
-            return redirect(url_for("personality"))
+            return render_template("quiz.html", **context)
 
         if request.method == "GET":
             return render_template("quiz.html", **context)
