@@ -71,18 +71,19 @@ def annotate():
             context["toannotate"] = songs
             return render_template("annotate.html", **context)
         if request.method == "POST":
-            profile = db_session.query(GenreProf).filter(GenreProf.user_id == session['user']).all()
-            if len(profile) < 1:
-                profile = GenreProf(session['user'])
-                db_session.add(profile)
-                db_session.commit()
-            else:
-                profile = profile[0]
-
-            for sid in request.form:
-                sgenre = request.form[sid]
+            for id_ in request.form:
+                sgenre = request.form[id_]
+                sid = int(id_.split("_")[0])
                 if sgenre != "Unknown":
-                    db_session.query(Songs).filter(Songs.id_ == sid).one().genre = sgenre
+                    song = db_session.query(Songs).filter(Songs.id_ == sid).one()
+                    song.genre = sgenre
+                    profile = db_session.query(GenreProf).filter(GenreProf.user_id == song.user_id).all()
+                    if len(profile) < 1:
+                        profile = GenreProf(song.user_id)
+                        db_session.add(profile)
+                        db_session.commit()
+                    else:
+                        profile = profile[0]
                     profile.add_genre(**{sgenre: 1})
             db_session.commit()
             return redirect(url_for("annotate"))
