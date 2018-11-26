@@ -5,7 +5,7 @@ import pdb
 from settings import DB_URL
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, exists
 from passlib.hash import bcrypt
 from sqlalchemy.orm import sessionmaker
 
@@ -167,7 +167,6 @@ def get_debug_session(DB_URL):
     engine = create_engine(DB_URL)
     Session = sessionmaker(bind=engine)
     session = Session()
-    pdb.set_trace()
     return session
 
 
@@ -189,6 +188,96 @@ def setup(DB_URL):
     return session
 
 
+def combine_users():
+    """Merge two data from two different databases into one."""
+    sess_aws = get_debug_session("sqlite:///database.db")
+    sess_preon = get_debug_session("sqlite:///preon_data.db")
+    preon_users = sess_preon.query(User).all()
+
+    print("# create users and add them temporarily")
+    new_users = []
+    map_dict = {}
+    for i, u in enumerate(preon_users):
+        map_dict[u.id_] = i
+        user = User(u.username, "pass", u.name, u.email)
+        user.age = u.age
+        user.gender = u.gender
+        new_users.append(user)
+        sess_aws.add(user)
+
+    sess_aws.flush()
+    # pdb.set_trace()
+
+    print("# Songs of all users")
+    new_songs = []
+    preon_songs = sess_preon.query(Songs).all()
+    for s in preon_songs:
+        try:
+            uid = new_users[map_dict[s.user_id]].id_
+        except KeyError:
+            continue
+        song = Songs(uid, s.title, s.artist)
+        new_songs.append(song)
+
+    print("# Personality of all users")
+    new_pers = []
+    preon_pers = sess_preon.query(Personality).all()
+    for p in preon_pers:
+        try:
+            uid = new_users[map_dict[p.user_id]].id_
+        except KeyError:
+            continue
+        pers = Personality(uid, [p.O, p.C, p.E, p.A, p.N])
+        new_pers.append(pers)
+
+    pdb.set_trace()
+
+
+def clean_data_no_personality():
+    """Delete users who did not take quiz."""
+    session = get_debug_session(DB_URL)
+    users = session.query(User).all()
+    personality = session.query(Personality).all()
+    uids_all = set([u.id_ for u in users])
+    uids_valid = set([u.user_id for u in personality])
+    uids_invalid = uids_all - uids_valid
+
+    for id_ in uids_invalid:
+        u = session.query(User).filter(User.id_ == id_).one()
+        session.delete(u)
+    session.commit()
+
+
+def clean_data_invalid_songs():
+    """Delete songs that are blank."""
+    session = get_debug_session(DB_URL)
+    songs = session.query(Songs).all()
+    for s in songs:
+        if s.title.strip() == "":
+            session.delete(s)
+    session.commit()
+
+
+def clean_data_no_songs():
+    """Delete users who did not give songs."""
+    session = get_debug_session(DB_URL)
+    users = session.query(User).all()
+    songs = session.query(Songs).all()
+    uids_all = set([u.id_ for u in users])
+    uids_valid = set([u.user_id for u in songs])
+    uids_invalid = uids_all - uids_valid
+
+    for id_ in uids_invalid:
+        u = session.query(User).filter(User.id_ == id_).one()
+        session.delete(u)
+    session.commit()
+
+
+
 if __name__ == "__main__":
     # session = setup(DB_URL)
     session = get_debug_session(DB_URL)
+    # combine_users()
+    # clean_data_invalid_songs()
+    # clean_data_no_songs()
+    pdb.set_trace()
