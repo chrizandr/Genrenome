@@ -1,5 +1,6 @@
 """Models for Hydra Classes."""
-
+import numpy as np
+import matplotlib.pyplot as plt
 import os
 import pdb
 from settings import DB_URL
@@ -111,6 +112,9 @@ class Personality(Base):
         """Verbose object name."""
         return "<userid='%s', score='%s'>" % (self.user_id, ",".join([str(self.O), str(self.C),
                                                                       str(self.E), str(self.A), str(self.N)]))
+
+    def get_vector(self):
+        return [self.O, self.C, self.E, self.A, self.N]
 
 
 class GenreProf(Base):
@@ -279,10 +283,125 @@ def clean_data_no_songs():
     session.commit()
 
 
+def cluster_personalities():
+    users = session.query(Personality).all()
+    arr = np.zeros((5 ,5))
+    codes = ['O', 'C', 'E', 'A', 'N']
+    for each in users:
+        pvec = each.get_vector()
+        ids = np.argsort(pvec)
+        arr[ids[-1], ids[-2]] += 1
+        arr[ids[-2], ids[-1]] += 1
+
+    hist = []
+    labels = []
+    for i in range(5):
+        for j in range(5):
+            if i<j:
+                hist.append(arr[i,j])
+                labels.append(codes[i]+'&'+codes[j])
+
+    plt.bar(labels, hist)
+    plt.xlabel('Different combinations of 5 personality traits')
+    plt.ylabel('Frequencies')
+    plt.show()
+    pdb.set_trace()
+
+def cluster_genres():
+    users_genres = session.query(GenreProf).all()
+    genres = ["Blues", "Contemporary", "Country", "Electronic", "Rap", "Pop", "Reggae", "Rock"]
+    gvecs = []
+    for user in users_genres:
+        gvec = user.get_vector()
+        gvec = np.array(gvec)/ sum(gvec)
+        gvecs.append(gvec[:-1])  ## removing others
+    
+    gvecs = np.array(gvecs)
+    plt.bar(genres, gvecs.sum(axis=0))
+    plt.xlabel('Different genres of music identified')
+    plt.ylabel('Normalized Frequencies')
+    plt.show()
+    
+    gvecs = np.transpose(gvecs)
+    corr = np.corrcoef(gvecs)
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(corr, cmap='hot', interpolation='nearest')
+    ax.set_xticks(np.arange(len(genres)))
+    ax.set_yticks(np.arange(len(genres)))
+
+    ax.set_xticklabels(genres)
+    ax.set_yticklabels(genres)
+
+    cbar = ax.figure.colorbar(im, ax=ax)
+    cbar.ax.set_ylabel('Correlation coefficients', rotation=-90, va="bottom")
+    plt.show()
+    pdb.set_trace()
+
+
+def cluster_ages():
+    users = session.query(User).all()
+    age_clusters = {'0':[], '1':[], '2':[]}
+    for user in users:
+        if user.age!=0:
+            gvec = session.query(GenreProf).filter_by(user_id = user.id_).first().get_vector()
+            gvec = np.array(gvec)/ sum(gvec)
+            if user.age <= 20:
+                age_clusters['0'].append(gvec[:-1]) 
+            elif user.age <= 30:
+                age_clusters['1'].append(gvec[:-1])
+            else:
+                age_clusters['2'].append(gvec[:-1])
+    
+    genres = ["Blues", "Contemporary", "Country", "Electronic", "Rap", "Pop", "Reggae", "Rock"]
+    cluster_codes = ['Age <= 20', '20 < Age <= 30', 'Age > 30']
+
+    for cluster in age_clusters.keys():
+        gvecs = np.array(age_clusters[cluster])
+        plt.bar(genres, gvecs.sum(axis=0)/gvecs.shape[0])
+        plt.xlabel('Different music genres')
+        plt.ylabel('Normalized Frequencies')
+        plt.title('Distribution of music genres for age group given by '+cluster_codes[int(cluster)])
+        plt.show()
+
+    pdb.set_trace()
+
+def cluster_gender():
+    users = session.query(User).all()
+    age_clusters = {'0':[], '1':[]}
+    for user in users:
+        if user.gender!='U':
+            gvec = session.query(GenreProf).filter_by(user_id = user.id_).first().get_vector()
+            gvec = np.array(gvec)/ sum(gvec)
+            if user.gender == 'M':
+                age_clusters['0'].append(gvec[:-1]) 
+            elif user.gender <= 'F':
+                age_clusters['1'].append(gvec[:-1])
+            
+    genres = ["Blues", "Contemporary", "Country", "Electronic", "Rap", "Pop", "Reggae", "Rock"]
+    cluster_codes = ['Male', 'Female']
+
+    for cluster in age_clusters.keys():
+        gvecs = np.array(age_clusters[cluster])
+        plt.bar(genres, gvecs.sum(axis=0)/gvecs.shape[0])
+        plt.xlabel('Different music genres')
+        plt.ylabel('Normalized Frequencies')
+        plt.title('Distribution of music genres for gender given by '+cluster_codes[int(cluster)])
+        plt.show()
+
+    pdb.set_trace()
+
+
 
 if __name__ == "__main__":
     # session = setup(DB_URL)
     session = get_debug_session(DB_URL)
+    
+    # cluster_personalities()
+    # cluster_genres()
+    cluster_ages()
+    # cluster_gender() 
+
     # combine_users()
     # clean_data_invalid_songs()
     # clean_data_no_songs()
