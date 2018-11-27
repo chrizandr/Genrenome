@@ -120,46 +120,52 @@ class GenreProf(Base):
 
     id_ = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id_"), unique=True)
-    genres = ["Blues", "Classical", "Country", "Electronic", "Folk", "Jazz", "New age", "Reggae", "Rock"]
+    genres = ["Blues", "Contemporary", "Country", "Electronic", "Rap", "Pop", "Reggae", "Rock", "Others"]
 
     Blues = Column(Integer)
-    Classical = Column(Integer)
+    Contemporary = Column(Integer)
     Country = Column(Integer)
     Electronic = Column(Integer)
-    Folk = Column(Integer)
-    Jazz = Column(Integer)
-    New_age = Column(Integer)
+    Rap = Column(Integer)
+    Pop = Column(Integer)
     Reggae = Column(Integer)
     Rock = Column(Integer)
+    Others = Column(Integer)
 
     def __init__(self, user_id):
         """Create new instance."""
         self.user_id = user_id
         self.Blues = 0
-        self.Classical = 0
+        self.Contemporary = 0
         self.Country = 0
         self.Electronic = 0
-        self.Folk = 0
-        self.Jazz = 0
-        self.New_age = 0
+        self.Rap = 0
+        self.Pop = 0
         self.Reggae = 0
         self.Rock = 0
+        self.Others = 0
 
-    def add_genre(self, Blues=0, Classical=0, Country=0, Electronic=0, Folk=0, Jazz=0, New_age=0, Reggae=0, Rock=0):
+    def add_genre(self, Blues=0, Contemporary=0, Country=0, Electronic=0, Rap=0, Pop=0, Reggae=0, Rock=0, Others=0):
         """Add prefered genre to the music profile of the user."""
         self.Blues += Blues
-        self.Classical += Classical
+        self.Contemporary += Contemporary
         self.Country += Country
         self.Electronic += Electronic
-        self.Folk += Folk
-        self.Jazz += Jazz
-        self.New_age += New_age
+        self.Rap += Rap
+        self.Pop += Pop
         self.Reggae += Reggae
         self.Rock += Rock
+        self.Others += Others
 
     def __repr__(self):
         """Verbose object name."""
         return "<userid='%s'>" % (self.user_id)
+
+    def get_vector(self):
+        vector = [self.Blues, self.Contemporary, self.Country,
+                  self.Electronic, self.Rap, self.Pop, self.Reggae,
+                  self.Rock, self.Others]
+        return vector
 
 
 def get_debug_session(DB_URL):
