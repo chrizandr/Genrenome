@@ -392,14 +392,91 @@ def cluster_gender():
     pdb.set_trace()
 
 
+def dominant_personality_music(g1, g2):
+
+    genre_g1 = [0, 2, 5, 6]
+    genre_g2 = [3, 4, 1, 7]
+    upersonalities = session.query(Personality).all()
+    ugenre_profiles = session.query(GenreProf).all()
+    arr = np.zeros((2, 2))
+    for pvec in upersonalities:
+        user_id = pvec.user_id
+        pvec = np.array(pvec.get_vector())
+        pvec_g1 = pvec[g1].sum()
+        pvec_g2 = pvec[g2].sum()
+        if pvec_g1 > pvec_g2:
+            dom_pvec = 0
+        else:
+            dom_pvec = 1
+
+        try:
+            gvec = session.query(GenreProf).filter_by(user_id = user_id).first().get_vector()
+            gvec = np.array(gvec)
+            gvec_g1 = gvec[genre_g1].sum()
+            gvec_g2 = gvec[genre_g2].sum()
+            if gvec_g1 > gvec_g2:
+                dom_gvec = 0
+            else:
+                dom_gvec = 1
+            
+            arr[dom_pvec, dom_gvec] += 1
+        except:
+            continue
+
+    from scipy.stats import chi2_contingency
+    chi2, pvalue, _, _ = chi2_contingency(arr)
+    #pdb.set_trace()
+    return pvalue
+
+def corr_personality_genre():
+    codes = {'0_1':0, '0_2':1, '0_3':2, '0_4':3, '1_2':4, '1_3':5, '1_4':6, '2_3':7, '2_4':8, '3_4':9} 
+    upersonalities = session.query(Personality).all()
+    ugenre_profiles = session.query(GenreProf).all()
+    arr = np.zeros((10, 8))
+    for pvec in upersonalities:
+        user_id = pvec.user_id
+        pvec = np.array(pvec.get_vector())
+        ids = np.argsort(pvec)
+        id1, id2 = ids[-1], ids[-2]
+        if id1>id2:
+            code = '{}_{}'.format(id2, id1)
+        else:
+            code = '{}_{}'.format(id1, id2)
+
+        try:
+            gvec = session.query(GenreProf).filter_by(user_id = user_id).first().get_vector()
+            gvec = np.array(gvec)
+            arr[codes[code]] += gvec[:-1]
+        except:
+            continue
+    pdb.set_trace()
+    from scipy.stats import chi2_contingency
+    chi2, pvalue, _, _ = chi2_contingency(arr)
+    #pdb.set_trace()
+    return pvalue
+
+    
+    
+
 
 if __name__ == "__main__":
     # session = setup(DB_URL)
     session = get_debug_session(DB_URL)
     
+    corr_personality_genre()
+
+    #p = dominant_personality_music([0, 1, 2], [3, 4]) # 0.1774461657461066
+    #print (p)
+    #p = dominant_personality_music([0, 1, 3], [2, 4]) ##invalid
+    #print (p)
+    #p = dominant_personality_music([0, 1, 4], [2, 3]) ## pvalue: 0.7031687608980215
+    #print (p)
+    #p = dominant_personality_music([0, 2, 4], [1, 3])  ## pvalue: 0.6615391927567419
+    #print (p)
+
     # cluster_personalities()
     # cluster_genres()
-    cluster_ages()
+    # cluster_ages()
     # cluster_gender() 
 
     # combine_users()
